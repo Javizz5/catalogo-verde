@@ -7,7 +7,8 @@ const COLORES_MAP = {
   'Azul': '#1d4ed8', 'Rojo': '#b91c1c', 'Verde': '#15803d', 'Rosa': '#db2777', 'Dorado': '#ca8a04'
 };
 
-export default function ProductCard({ producto, numeroWhatsApp }) {
+// 1. Agregamos onImageClick a las propiedades que recibe el componente
+export default function ProductCard({ producto, numeroWhatsApp, onImageClick }) {
   const [metodoPago, setMetodoPago] = useState('credito');
 
   if (!producto) return null;
@@ -46,17 +47,23 @@ export default function ProductCard({ producto, numeroWhatsApp }) {
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-emerald-100 overflow-hidden flex flex-col h-full">
       <div className="h-48 bg-emerald-50/50 flex items-center justify-center relative p-4 group">
         {producto.foto ? (
-          <img src={producto.foto} alt={producto.nombre} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+          // 2. Agregamos el evento onClick y el cursor de lupa a la imagen
+          <img 
+            src={producto.foto} 
+            alt={producto.nombre} 
+            onClick={onImageClick}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 cursor-zoom-in" 
+          />
         ) : (
           <ImageIcon className="text-emerald-200 w-16 h-16 group-hover:scale-110 transition-transform duration-300" />
         )}
-        <div className="absolute top-3 left-3 flex gap-2">
+        <div className="absolute top-3 left-3 flex gap-2 pointer-events-none">
           <span className="bg-emerald-100 text-emerald-800 text-[10px] font-bold px-2.5 py-1 rounded-full flex items-center gap-1">
             <Package size={12} />
             {producto.stock} disponibles
           </span>
         </div>
-        <span className="absolute top-3 right-3 bg-white text-gray-600 text-[10px] font-bold px-2 py-1 rounded-md shadow-sm border border-gray-100">
+        <span className="absolute top-3 right-3 bg-white text-gray-600 text-[10px] font-bold px-2 py-1 rounded-md shadow-sm border border-gray-100 pointer-events-none">
           {producto.marca}
         </span>
       </div>

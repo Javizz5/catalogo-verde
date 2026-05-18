@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Menu } from 'lucide-react';
+import { Search, Menu, X } from 'lucide-react'; // <-- IMPORTANTE: Agregué la X aquí
 import ProductCard from './ProductCard';
 
 function Catalogo() {
@@ -8,14 +8,15 @@ function Catalogo() {
   const [busqueda, setBusqueda] = useState(""); 
   const [whatsapp, setWhatsapp] = useState(""); 
   const [catSeleccionada, setCatSeleccionada] = useState("Todas");
+  
+  // NUEVO ESTADO: Para controlar la imagen gigante
+  const [imagenAmpliada, setImagenAmpliada] = useState(null);
 
-  // 1. CAMBIO CLAVE: Usamos la variable de entorno de Vite
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const obtenerDatos = async () => {
       try {
-        // 2. Ajustamos las rutas para que coincidan con tu main.py de FastAPI
         const [resProd, resConf, resCat] = await Promise.all([
           fetch(`${API_URL}/productos`),
           fetch(`${API_URL}/config`),
@@ -29,7 +30,6 @@ function Catalogo() {
         setWhatsapp(config.whatsapp);
         setCategorias(cats.lista || ['General']);
         
-        // 3. Adaptación de datos con protección (por si marca o stock vienen vacíos)
         const productosAdaptados = datos_reales.map(prod => ({
             ...prod, 
             disponible: prod.stock || 0,
@@ -43,7 +43,6 @@ function Catalogo() {
     obtenerDatos();
   }, [API_URL]);
 
-  // DOBLE FILTRO: Por texto (Nombre/Marca) Y por categoría
   const productosFiltrados = productos.filter(p => {
     const nombre = p.nombre ? p.nombre.toLowerCase() : "";
     const marca = p.marca ? p.marca.toLowerCase() : "";
@@ -56,7 +55,7 @@ function Catalogo() {
   });
 
   return (
-    <div className="min-h-screen bg-gray-50 font-sans">
+    <div className="min-h-screen bg-gray-50 font-sans relative">
       <nav className="bg-emerald-800 text-white shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
@@ -100,7 +99,6 @@ function Catalogo() {
           </div>
         </div>
 
-        {/* PESTAÑAS DE CATEGORÍAS DESLIZABLES */}
         <div className="flex overflow-x-auto gap-2 pb-4 mb-4 scrollbar-hide">
           <button 
             onClick={() => setCatSeleccionada("Todas")} 
@@ -122,7 +120,12 @@ function Catalogo() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
           {productosFiltrados.length > 0 ? (
             productosFiltrados.map((prod) => (
-              <ProductCard key={prod.id} producto={prod} numeroWhatsApp={whatsapp} />
+              <ProductCard 
+                key={prod.id} 
+                producto={prod} 
+                numeroWhatsApp={whatsapp}
+                onImageClick={() => setImagenAmpliada(prod.foto)} // <-- NUEVO: Le pasamos la función a la tarjeta
+              />
             ))
           ) : (
             <div className="col-span-full text-center py-20">
@@ -131,6 +134,29 @@ function Catalogo() {
           )}
         </div>
       </main>
+
+      {/* --- MODAL DE IMAGEN AMPLIADA --- */}
+      {imagenAmpliada && (
+        <div 
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm transition-opacity cursor-zoom-out"
+          onClick={() => setImagenAmpliada(null)}
+        >
+          <div className="relative max-w-5xl w-full h-full flex items-center justify-center cursor-default" onClick={(e) => e.stopPropagation()}>
+            <button 
+              onClick={() => setImagenAmpliada(null)}
+              className="absolute top-4 right-4 sm:top-10 sm:right-10 text-white bg-white/10 hover:bg-red-500 rounded-full p-3 transition-colors backdrop-blur-md"
+            >
+              <X size={24} />
+            </button>
+            <img 
+              src={imagenAmpliada} 
+              alt="Producto ampliado" 
+              className="max-w-full max-h-full object-contain rounded-2xl shadow-2xl" 
+            />
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }
