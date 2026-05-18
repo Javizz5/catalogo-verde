@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Search, Menu, X } from 'lucide-react'; // <-- IMPORTANTE: Agregué la X aquí
+import { Search, Menu, X } from 'lucide-react';
 import ProductCard from './ProductCard';
 
 function Catalogo() {
@@ -9,7 +9,6 @@ function Catalogo() {
   const [whatsapp, setWhatsapp] = useState(""); 
   const [catSeleccionada, setCatSeleccionada] = useState("Todas");
   
-  // NUEVO ESTADO: Para controlar la imagen gigante
   const [imagenAmpliada, setImagenAmpliada] = useState(null);
 
   const API_URL = import.meta.env.VITE_API_URL;
@@ -33,7 +32,7 @@ function Catalogo() {
         const productosAdaptados = datos_reales.map(prod => ({
             ...prod, 
             disponible: prod.stock || 0,
-            marca: prod.marca || "Zaher Tech" 
+            marca: prod.marca || "" // Corrección: String vacío en lugar de nombre por defecto
         }));
         setProductos(productosAdaptados);
       } catch (error) {
@@ -124,7 +123,7 @@ function Catalogo() {
                 key={prod.id} 
                 producto={prod} 
                 numeroWhatsApp={whatsapp}
-                onImageClick={() => setImagenAmpliada(prod.foto)} // <-- NUEVO: Le pasamos la función a la tarjeta
+                onImageClick={() => setImagenAmpliada(prod.foto)}
               />
             ))
           ) : (
@@ -156,7 +155,6 @@ function Catalogo() {
           </div>
         </div>
       )}
-
     </div>
   );
 }

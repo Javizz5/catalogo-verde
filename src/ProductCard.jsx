@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { Package, Image as ImageIcon, MessageCircle } from 'lucide-react';
 
-// Diccionario visual de colores
 const COLORES_MAP = {
   'Negro': '#111827', 'Blanco': '#f9fafb', 'Gris': '#9ca3af', 'Plata': '#e5e7eb',
   'Azul': '#1d4ed8', 'Rojo': '#b91c1c', 'Verde': '#15803d', 'Rosa': '#db2777', 'Dorado': '#ca8a04'
 };
 
-// 1. Agregamos onImageClick a las propiedades que recibe el componente
 export default function ProductCard({ producto, numeroWhatsApp, onImageClick }) {
   const [metodoPago, setMetodoPago] = useState('credito');
 
@@ -27,28 +25,28 @@ export default function ProductCard({ producto, numeroWhatsApp, onImageClick }) 
     { id: 'quincenal', label: 'Quincenal' }
   ];
 
-  // COLORES: Lógica para mostrarlos
   const coloresProducto = producto.colores || [];
   const coloresTexto = coloresProducto.length > 0 ? coloresProducto.join(', ') : 'Consultar';
 
-  // WHATSAPP: Mensaje Profesional
   const numeroLimpio = numeroWhatsApp ? numeroWhatsApp.replace(/\D/g, '') : "584141234567"; 
+  
+  // Mensaje versión "profesional"
   const mensaje = encodeURIComponent(
     `👋 ¡Hola, Javier Zambrano!\n\n` +
     `Vengo de su catálogo virtual y me interesa este artículo:\n\n` +
     `📦 *Producto:* ${producto.nombre}\n` +
-    `🏷️ *Marca:* ${producto.marca}\n` +
+    `${producto.marca ? `🏷️ *Marca:* ${producto.marca}\n` : ''}` +
     `🎨 *Color de interés:* ${coloresTexto}\n` +
     `💳 *Modalidad de pago:* ${opcionesPago.find(o => o.id === metodoPago).label} ($${infoPrecios[metodoPago].valor})\n\n` +
     `¿Me confirmarían disponibilidad por favor?`
   );
+  
   const linkWhatsApp = `https://wa.me/${numeroLimpio}?text=${mensaje}`;
 
   return (
     <div className="bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 border border-emerald-100 overflow-hidden flex flex-col h-full">
       <div className="h-48 bg-emerald-50/50 flex items-center justify-center relative p-4 group">
         {producto.foto ? (
-          // 2. Agregamos el evento onClick y el cursor de lupa a la imagen
           <img 
             src={producto.foto} 
             alt={producto.nombre} 
@@ -64,15 +62,18 @@ export default function ProductCard({ producto, numeroWhatsApp, onImageClick }) 
             {producto.stock} disponibles
           </span>
         </div>
-        <span className="absolute top-3 right-3 bg-white text-gray-600 text-[10px] font-bold px-2 py-1 rounded-md shadow-sm border border-gray-100 pointer-events-none">
-          {producto.marca}
-        </span>
+        
+        {/* Corrección: La etiqueta de marca solo se muestra si existe una marca */}
+        {producto.marca && (
+          <span className="absolute top-3 right-3 bg-white text-gray-600 text-[10px] font-bold px-2 py-1 rounded-md shadow-sm border border-gray-100 pointer-events-none">
+            {producto.marca}
+          </span>
+        )}
       </div>
 
       <div className="p-5 flex-1 flex flex-col">
         <h3 className="text-lg font-bold text-gray-800 leading-tight mb-2">{producto.nombre}</h3>
         
-        {/* Renderizado dinámico de colores reales */}
         <div className="flex items-center gap-2 mb-4 h-6">
           <span className="text-xs text-gray-500 font-medium">Colores:</span>
           <div className="flex gap-1.5">
