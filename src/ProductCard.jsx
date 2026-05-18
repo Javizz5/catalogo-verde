@@ -34,7 +34,8 @@ export default function ProductCard({ producto, numeroWhatsApp, onImageClick }) 
   // WHATSAPP: Mensaje Profesional
   const numeroLimpio = numeroWhatsApp ? numeroWhatsApp.replace(/\D/g, '') : "584141234567"; 
   const mensaje = encodeURIComponent(
-    `👋 ¡Hola! Vengo de su catálogo virtual y me interesa este artículo:\n\n` +
+    `👋 ¡Hola, Javier Zambrano!\n\n` +
+    `Vengo de su catálogo virtual y me interesa este artículo:\n\n` +
     `📦 *Producto:* ${producto.nombre}\n` +
     `🏷️ *Marca:* ${producto.marca}\n` +
     `🎨 *Color de interés:* ${coloresTexto}\n` +
